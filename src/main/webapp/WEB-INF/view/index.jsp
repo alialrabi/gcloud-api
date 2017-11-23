@@ -15,20 +15,74 @@
 <body style="margin-top: 150px;">
 
 	<div class="container">
-		<form:form modelAttribute="api">
+		<form:form modelAttribute="api" id="redactform">
 			<div class="form-group">
-				<label for="text" class="col-sm-2 control-label">Your text</label>
+				<label for="text" class="col-sm-2 control-label">Redact text by DLP API</label>
 				<div class="col-sm-10">
-					<form:textarea path="text" class="form-control" rows="10"/>
+					<form:textarea path="text" class="form-control" rows="10" id="redacttext" style="display:none;"/>
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-default">Submit</button>
+				<div class="col-sm-offset-2 col-sm-10">					
 				</div>
 			</div>
 		</form:form>
+		
+		<button type="submit" id="redact" class="btn btn-default">Redact</button>
+		
+
 	</div>
+	
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    
+    (function () {
+        "use strict";
+
+        // The initialize function is run each time the page is loaded.
+        Office.initialize = function (reason) {
+            $(document).ready(function () {
+
+                if (Office.context.requirements.isSetSupported('WordApi', 1.1)) {
+                 $('#redact').on('click',function() {
+                        excuteRedact();
+                    });
+                    
+                    $('#submit').on('click',function() {
+                    	submitform();
+                    });
+                    
+                    $('#supportedVersion').html('This code is using Word 2016 or greater.');
+                }
+                else {
+                    // Just letting you know that this code will not work with your version of Word.
+                    $('#supportedVersion').html('This code requires Word 2016 or greater.');
+                }
+            });
+        };
+
+        function submitform(){
+        	  $('#redactform').submit();
+        }
+        
+        function excuteRedact() {
+            Word.run(function (context) {
+            	 var documentBody = context.document.body;
+            	    context.load(documentBody);
+            	    return context.sync()
+            	    .then(function(){
+            	        console.log(documentBody.text);
+            	        var myTextArea = $('#redacttext');
+            	        myTextArea.text(documentBody.text);
+            	        $('#redactform').submit();
+            	    })
+            	    $('#redactform').submit();
+            })
+            
+        }
+    })();
+    </script>
 
 </body>
 </html>

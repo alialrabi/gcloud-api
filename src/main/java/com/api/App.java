@@ -3,6 +3,8 @@ package com.api;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,41 +32,23 @@ public class App {
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String homePage(@ModelAttribute("api") API api, Model model) {
+	public String homePage(@ModelAttribute("api") API api, Model model , HttpServletRequest httpRequest) {
 		
-
-		System.out.println("111111111111111111111111111111111");
-		/**
-		String accessToken="ya29.c.El8MBUrRoc6Lv4NwP6Cc_yrjV6g8FQh3Z-prYmkO6bJgakTUOMyxDRS211P3EdjyBxPjeFQephb5Qh6n_AHgIWFCWn7gaKCcKBB_JfnJmoJxeH0mVmCPIa2ebFYT9rnzHA";
-		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-		Plus plus = new Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
-		    .setApplicationName("dlp-redaction-poc")
-		    .build();
-		**/
-		System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 		
-		    // string to inspect
-		    String text = api.getText();
+ 		 System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+		 String text = api.getText();
 		    
-		    System.out.println("redact text is : "+text);
-
-		    // The minimum likelihood required before returning a match:
-		    // LIKELIHOOD_UNSPECIFIED, VERY_UNLIKELY, UNLIKELY, POSSIBLE, LIKELY, VERY_LIKELY, UNRECOGNIZED
-		    Likelihood minLikelihood = Likelihood.VERY_LIKELY;
-
-		    // The maximum number of findings to report (0 = server maximum)
+         System.out.println("redact text is : "+text);
+         Likelihood minLikelihood = Likelihood.VERY_LIKELY;
 		    int maxFindings = 0;
 
-		    // The infoTypes of information to match
 		    List<InfoType> infoTypes =
 		        Arrays.asList(
 		            InfoType.newBuilder().setName("US_MALE_NAME").build(),
 		            InfoType.newBuilder().setName("US_FEMALE_NAME").build());
 
-		    // Whether to include the matching string
 		    boolean includeQuote = true;
 
-		    // instantiate a client
 		    try {
 		     DlpServiceClient dlpServiceClient = DlpServiceClient.create();
 		      InspectConfig inspectConfig =
@@ -106,6 +90,6 @@ public class App {
 		    } catch (Exception e) {
 		      System.out.println("Error in inspectString: " + e.getMessage());
 		    }
-		return "inspect";
+		    return ""; 
 	}
 }
