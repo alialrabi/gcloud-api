@@ -34,7 +34,6 @@ public class App {
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public String homePage(@ModelAttribute("api") API api, Model model , HttpServletRequest httpRequest) {
 		
-		
  		 System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 		 String text = api.getText();
 		    
@@ -68,10 +67,8 @@ public class App {
 		              .addItems(contentItem)
 		              .build();
 
-		      // Inspect the text for info types
 		      InspectContentResponse response = dlpServiceClient.inspectContent(request);
 
-		      // Print the response
 		      for (InspectResult result : response.getResultsList()) {
 		        if (result.getFindingsCount() > 0) {
 		          System.out.println("Findings: ");
@@ -90,6 +87,6 @@ public class App {
 		    } catch (Exception e) {
 		      System.out.println("Error in inspectString: " + e.getMessage());
 		    }
-		    return ""; 
+		    return "index"; 
 	}
 }
