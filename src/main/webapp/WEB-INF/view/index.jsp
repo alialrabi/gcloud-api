@@ -14,10 +14,11 @@
 </head>
 <body style="margin-top: 150px;">
 
+    <h3 for="text" class="col-sm-2 control-label">Redact text by DLP API</h3>
+    
 	<div class="container">
 		<form:form modelAttribute="api" id="redactform">
 			<div class="form-group">
-				<label for="text" class="col-sm-2 control-label">Redact text by DLP API</label>
 				<div class="col-sm-10">
 					<form:textarea path="text" class="form-control" rows="10" id="redacttext" style="display:none;"/>
 				</div>
@@ -28,8 +29,9 @@
 			</div>
 		</form:form>
 		
-		<button type="submit" id="redact" class="btn btn-default">Redact</button>
+		<button type="submit" id="redact" class="btn btn-info">Redact</button>
 		
+        <p>Redact result printed in Eclipse Console</p>
 
 	</div>
 	
