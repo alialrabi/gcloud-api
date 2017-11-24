@@ -43,8 +43,19 @@ public class App {
 
 		    List<InfoType> infoTypes =
 		        Arrays.asList(
+		            InfoType.newBuilder().setName("US_HEALTHCARE_NPI").build(),
+		            InfoType.newBuilder().setName("CANADA_OHIP").build(),
+		            InfoType.newBuilder().setName("CREDIT_CARD_NUMBER").build(),
+		            InfoType.newBuilder().setName("IBAN_CODE").build(),
+		            InfoType.newBuilder().setName("SWIFT_CODE").build(),
+		            InfoType.newBuilder().setName("US_SOCIAL_SECURITY_NUMBER").build(),
+		            InfoType.newBuilder().setName("UK_TAXPAYER_REFERENCE").build(),
+		            InfoType.newBuilder().setName("PHONE_NUMBER").build(),
+		            InfoType.newBuilder().setName("GERMANY_PASSPORT").build(),
+		            InfoType.newBuilder().setName("EMAIL_ADDRESS").build(),
+		            InfoType.newBuilder().setName("US_DRIVERS_LICENSE_NUMBER").build(),
 		            InfoType.newBuilder().setName("US_MALE_NAME").build(),
-		            InfoType.newBuilder().setName("US_FEMALE_NAME").build());
+                    InfoType.newBuilder().setName("US_FEMALE_NAME").build());
 
 		    boolean includeQuote = true;
 
