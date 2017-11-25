@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -14,77 +14,105 @@
 </head>
 <body style="margin-top: 150px;">
 
-    <h3 for="text" class="col-sm-2 control-label">Redact text by DLP API</h3>
-    
+	<h3 for="text" class="col-sm-2 control-label">Redact text by DLP
+		API</h3>
+
 	<div class="container">
 		<form:form modelAttribute="api" id="redactform">
 			<div class="form-group">
 				<div class="col-sm-10">
-					<form:textarea path="text" class="form-control" rows="10" id="redacttext" style="display:none;"/>
+					<form:textarea path="text" class="form-control" rows="10"
+						style="display:none;" id="redacttext" />
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">					
-				</div>
+				<div class="col-sm-offset-2 col-sm-10"></div>
 			</div>
 		</form:form>
-		
-		<button type="submit" id="redact" class="btn btn-info">Redact</button>
-		
-        <p>Redact result printed in Eclipse Console</p>
+
+		<button type="submit" id="redact" class="btn btn-info"
+			onclick="submitform()">Redact</button>
+
+		<div class="container-wrapper">
+			<hr>
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr class="bg-success">
+						<th>Quote</th>
+						<th>Info type</th>
+						<th>Likelihood</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="find" items="${finds}">
+						<tr>
+							<td>${find.quoteName}</td>
+							<td>${find.typeInfo}</td>
+							<td>${find.likelihood}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+
+		</div>
 
 	</div>
+
+	<script
+		src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<script
+		src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+		type="text/javascript"></script>
+	<script type="text/javascript">
+		function submitform() {
+			console.log("555555555555555555555555555");
+			$('#redactform').submit();
+		}
+		(function() {
+			"use strict";
 	
-	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
-    <script type="text/javascript">
-    
-    (function () {
-        "use strict";
-
-        // The initialize function is run each time the page is loaded.
-        Office.initialize = function (reason) {
-            $(document).ready(function () {
-
-                if (Office.context.requirements.isSetSupported('WordApi', 1.1)) {
-                 $('#redact').on('click',function() {
-                        excuteRedact();
-                    });
-                    
-                    $('#submit').on('click',function() {
-                    	submitform();
-                    });
-                    
-                    $('#supportedVersion').html('This code is using Word 2016 or greater.');
-                }
-                else {
-                    // Just letting you know that this code will not work with your version of Word.
-                    $('#supportedVersion').html('This code requires Word 2016 or greater.');
-                }
-            });
-        };
-
-        function submitform(){
-        	  $('#redactform').submit();
-        }
-        
-        function excuteRedact() {
-            Word.run(function (context) {
-            	 var documentBody = context.document.body;
-            	    context.load(documentBody);
-            	    return context.sync()
-            	    .then(function(){
-            	        console.log(documentBody.text);
-            	        var myTextArea = $('#redacttext');
-            	        myTextArea.text(documentBody.text);
-            	        $('#redactform').submit();
-            	    })
-            	    $('#redactform').submit();
-            })
-            
-        }
-    })();
-    </script>
+			// The initialize function is run each time the page is loaded.
+			Office.initialize = function(reason) {
+				$(document).ready(function() {
+	
+					if (Office.context.requirements.isSetSupported('WordApi', 1.1)) {
+						$('#redact').on('click', function() {
+							excuteRedact();
+						});
+	
+						$('#submit').on('click', function() {
+							submitform();
+						});
+	
+						$('#supportedVersion').html('This code is using Word 2016 or greater.');
+					} else {
+						// Just letting you know that this code will not work with your version of Word.
+						$('#supportedVersion').html('This code requires Word 2016 or greater.');
+					}
+				});
+			};
+	
+			function submitform() {
+				$('#redactform').submit();
+			}
+	
+			function excuteRedact() {
+				Word.run(function(context) {
+					var documentBody = context.document.body;
+					context.load(documentBody);
+					return context.sync()
+						.then(function() {
+							console.log(documentBody.text);
+							var myTextArea = $('#redacttext');
+							myTextArea.text(documentBody.text);
+							$('#redactform').submit();
+						})
+					$('#redactform').submit();
+				})
+	
+			}
+		})();
+	</script>
 
 </body>
 </html>

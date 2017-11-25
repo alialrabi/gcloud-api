@@ -1,16 +1,15 @@
 package com.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
+import com.model.Findings;
 import com.google.cloud.dlp.v2beta1.DlpServiceClient;
 import com.google.privacy.dlp.v2beta1.ContentItem;
 import com.google.privacy.dlp.v2beta1.Finding;
@@ -28,11 +27,12 @@ public class App {
 	public String homePage(Model model) {
 		API api = new API();
 		model.addAttribute("api", api);
+		// model.addAttribute("redacts" , "");
 		return "index";
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String homePage(@ModelAttribute("api") API api, Model model , HttpServletRequest httpRequest) {
+	public String homePage(@ModelAttribute("api") API api, Model model) {
 		
  		 System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 		 String text = api.getText();
@@ -79,18 +79,29 @@ public class App {
 		              .build();
 
 		      InspectContentResponse response = dlpServiceClient.inspectContent(request);
-
+		      
+		      List<Findings> finds = new ArrayList<Findings>();
+		      
 		      for (InspectResult result : response.getResultsList()) {
 		        if (result.getFindingsCount() > 0) {
 		          System.out.println("Findings: ");
 		          for (Finding finding : result.getFindingsList()) {
+			    	  Findings find = new Findings();
 		            if (includeQuote) {
 		              System.out.print("Quote: " + finding.getQuote());
+		              find.setQuoteName(finding.getQuote());
 		            }
 		            System.out.print("\tInfo type: " + finding.getInfoType().getName());
+		            find.setTypeInfo(finding.getInfoType().getName());
+		             
 		            System.out.println("\tLikelihood: " + finding.getLikelihood());
-		    		model.addAttribute("text", finding.getInfoType().getName());
+		            find.setLikelihood(finding.getLikelihood().toString());
+		            finds.add(find);
 		          }
+		          System.out.println("////////////////////////////////");
+		          System.out.println(finds);
+		             model.addAttribute("finds" , finds);
+
 		        } else {
 		          System.out.println("No findings.");
 		        }
