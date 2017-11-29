@@ -18,42 +18,14 @@
 		API</h3>
 
 	<div class="container">
-		<form:form modelAttribute="api" id="redactform">
-			<div class="form-group">
-				<div class="col-sm-10">
-					<form:textarea path="text" class="form-control" rows="10"
-						style="display:none;" id="redacttext" />
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10"></div>
-			</div>
-		</form:form>
+	
 
 		<button type="submit" id="redact" class="btn btn-info"
-			onclick="submitform()">Redact</button>
+			>Redact</button>
 
 		<div class="container-wrapper">
 			<hr>
-			<table class="table table-striped table-hover">
-				<thead>
-					<tr class="bg-success">
-						<th>Quote</th>
-						<th>Info type</th>
-						<th>Likelihood</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="find" items="${finds}">
-						<tr>
-							<td>${find.quoteName}</td>
-							<td>${find.typeInfo}</td>
-							<td>${find.likelihood}</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-
+					
 		</div>
 
 	</div>
@@ -64,10 +36,6 @@
 		src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
 		type="text/javascript"></script>
 	<script type="text/javascript">
-		function submitform() {
-			console.log("555555555555555555555555555");
-			$('#redactform').submit();
-		}
 		(function() {
 			"use strict";
 	
@@ -77,11 +45,7 @@
 	
 					if (Office.context.requirements.isSetSupported('WordApi', 1.1)) {
 						$('#redact').on('click', function() {
-							excuteRedact();
-						});
-	
-						$('#submit').on('click', function() {
-							submitform();
+							redactText();
 						});
 	
 						$('#supportedVersion').html('This code is using Word 2016 or greater.');
@@ -91,26 +55,42 @@
 					}
 				});
 			};
-	
-			function submitform() {
-				$('#redactform').submit();
+			
+						
+			function redactText() {
+			    Office.context.document.getSelectedDataAsync(Office.CoercionType.Html,{
+			        valueFormat: Office.ValueFormat.Formatted,
+			        filterType: Office.FilterType.All
+			      },
+			        function (asyncResult) {
+			            var error = asyncResult.error;
+			            if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+			                write(error.name + ": " + error.message);
+			            } 
+			            else {
+			                var dataValue = asyncResult.value; 
+			                console.log(asyncResult);
+			                console.log(dataValue);
+			                			                
+						    var formData = new FormData();
+						    formData.append('file', dataValue);
+						    
+						    var xhr = new XMLHttpRequest();
+						    xhr.open('POST', 'http://localhost:8080/gcloud-api/', true); 
+						    xhr.responseType = 'text/xml';
+						    xhr.onload = function(e) { };
+						    xhr.send(formData);
+						    xhr.onreadystatechange = function () {
+						        if (xhr.readyState == 4) {
+						            if (xhr.status == 200) {
+						                var data = xhr.responseText;
+						            }
+						        }
+						    };
+			            }            
+			        });
 			}
-	
-			function excuteRedact() {
-				Word.run(function(context) {
-					var documentBody = context.document.body;
-					context.load(documentBody);
-					return context.sync()
-						.then(function() {
-							console.log(documentBody.text);
-							var myTextArea = $('#redacttext');
-							myTextArea.text(documentBody.text);
-							$('#redactform').submit();
-						})
-					$('#redactform').submit();
-				})
-	
-			}
+			
 		})();
 	</script>
 
